@@ -39,7 +39,7 @@ class PlotInclusions(PlotBase):
             else:
                 lw = 0.7
 
-            myplot = self.ax.errorbar(*inc_found, color=col, lw=lw)
+            myplot = self.ax.errorbar(*inc_found, color=col, lw=lw, alpha = 0.5)
             if self.thick[data_key]:
                 self.legend_name.append(f"{data_key}")
                 self.legend_plt.append(myplot)
@@ -48,21 +48,23 @@ class PlotInclusions(PlotBase):
             self.ax2 = self.ax.twiny()
             self.ax.set_xlim(0, max_len)
             self.ax2.set_xlim(0, 100)
-            self.ax.set_xlabel("# Reviewed")
-            self.ax2.set_xlabel("% Reviewed")
-            self.ax.set_ylabel("# Inclusions found")
+            self.ax.set_xlabel("# Screened")
+            self.ax2.set_xlabel("% Screened")
+            self.ax.set_ylabel("# Relevant publications found")
         elif result_format == "percentage":
-            self.ax.set_xlabel("% Reviewed")
-            self.ax.set_ylabel("% Inclusions found")
+            self.ax.set_xlabel("% Screened")
+            self.ax.set_ylabel("% Relevant publications found")
         self.fig.tight_layout()
 
     def add_WSS(self, data_key, value=95, text_at=None, add_value=False,
                 alpha=0.8, text_col="white", **kwargs):
         analysis = self.analyses[data_key]
+        # analysis = incplot.analysis[data_key]
         col = self.col[data_key]
 
         if value is None:
             return
+
 
         text = f"WSS@{value}%"
         WSS_val, WSS_x, WSS_y = analysis.wss(
@@ -76,10 +78,10 @@ class PlotInclusions(PlotBase):
         if text_at is None:
             text_at = (WSS_x[0] + self.box_dist, (WSS_y[0] + WSS_y[1])/2)
 
-        self.ax.plot(WSS_x, WSS_y, color=col, ls="--")
-        self.ax.plot(WSS_x, (0, WSS_y[0]), color=col, ls=":")
-        bbox = dict(boxstyle='round', facecolor=col, alpha=alpha)
-        self.ax.text(*text_at, text, color=text_col, bbox=bbox)
+        self.ax.plot(WSS_x, WSS_y, color=col, ls="--") # lijn 1
+        self.ax.plot(WSS_x, (0, WSS_y[0]), color=col, ls=":") # lijn 2
+        #bbox = dict(boxstyle='round', facecolor=col, alpha=alpha)
+        #self.ax.text(*text_at, text, color=text_col, bbox=bbox)
 
     def add_RRF(self, data_key, value=10, text_at=None, add_value=False,
                 alpha=0.8, text_col="white", **kwargs):
@@ -113,8 +115,8 @@ class PlotInclusions(PlotBase):
             xlim = self.ax.get_xlim()
             ylim = self.ax.get_ylim()
             text_at = (
-                np.average(xlim) - 0.07 * (xlim[1]-xlim[0]),
-                np.average(xlim) + 0.07 * (ylim[1]-ylim[0]),
+                np.average(xlim) - 0.28 * (xlim[1]-xlim[0]),
+                np.average(xlim) - 0.35 * (ylim[1]-ylim[0]),
             )
 
         bbox = dict(boxstyle='round', facecolor='0.65')
